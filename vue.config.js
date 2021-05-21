@@ -103,10 +103,12 @@ module.exports = {
   css: {
     loaderOptions: {
       less: {
-        lessOptions: {
-          modifyVars: modifyVars(),
-          javascriptEnabled: true
-        }
+        // lessOptions: {
+        //   modifyVars: modifyVars(),
+        //   javascriptEnabled: true
+        // }
+        modifyVars: modifyVars(),
+        javascriptEnabled: true
       }
     }
   },

@@ -33,6 +33,7 @@ function modifyVars(color) {
   const primary = palettes[5]
   return {
     'primary-color': primary,
+    'layout-color': primary,
     'primary-1': palettes[0],
     'primary-2': palettes[1],
     'primary-3': palettes[2],
