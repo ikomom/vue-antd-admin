@@ -1,7 +1,7 @@
 <template>
   <page-layout :desc="desc" :linkList="linkList">
     <div v-if="this.extraImage && !isMobile" slot="extra" class="extraImg">
-      <img :src="extraImage"/>
+      <img :src="extraImage" alt=""/>
     </div>
     <page-toggle-transition :disabled="animate.disabled" :animate="animate.name" :direction="animate.direction">
         <router-view ref="page" />
@@ -36,6 +36,7 @@ export default {
   },
   mounted () {
     this.page = this.$refs.page
+    console.log('PageView mounted', this.$refs)
   },
   updated () {
     this.page = this.$refs.page

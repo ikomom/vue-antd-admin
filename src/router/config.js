@@ -27,6 +27,38 @@ const options = {
       redirect: '/login',
       children: [
         {
+          path: 'test',
+          name: '测试',
+          meta: {
+            icon: 'dashboard'
+          },
+          component: PageView,
+          children: [
+            {
+              path: 'formDesign',
+              name: '表单设计器',
+              component: () => import('@/pages/test/formDesign/index'),
+            },
+            {
+              path: 'testRouter',
+              name: '测试路由',
+              component: () => import('@/pages/test/testRouter/TestRouter'),
+              children: [
+                {
+                  path: 'middle',
+                  name: '中间',
+                  component: () => import('@/pages/test/testRouter/Middle'),
+                }
+              ]
+            },
+            {
+              path: 'testLayout',
+              name: '测试布局',
+              component: () => import('@/pages/test/TestLayout'),
+            }
+          ]
+        },
+        {
           path: 'dashboard',
           name: 'Dashboard',
           meta: {
