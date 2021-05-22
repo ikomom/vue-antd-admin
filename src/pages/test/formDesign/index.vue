@@ -1,27 +1,52 @@
 <template>
   <div>
-    <k-form-build ref="kfb"  :value="defaultData" title="表单生成"/>
-    <k-form-design ref='kfd' title="表单设计"  @close="handleClose" @save="handleSave"/>
+    <k-form-build
+        ref="kfb"
+        :dynamicData="dynamicData"
+        :value="defaultData"
+        title="表单生成"
+    />
+    <a-button @click="handleSubmit">提交</a-button>
+    <k-form-design ref='kfd' title="表单设计" @close="handleClose" @save="handleSave" />
   </div>
 </template>
 
 <script>
 export default {
   name: "index",
-  data(){
+  data() {
     return {
+      dynamicData: {
+        select1: [
+          {key: '1', label: '缺失', value: 'xxxx'},
+          {key: '2', label: '最新资讯', value: 'aaa'},
+        ]
+      },
       defaultData: {
         "list": [
           {
-            "type": "SInput",
-            "label": "输入组件",
+            "type": "select",
+            "label": "下拉选择器",
             "options": {
-              "disabled": false,
               "width": "100%",
-              "placeholder": "请输入"
+              "multiple": false,
+              "disabled": false,
+              "clearable": false,
+              "hidden": false,
+              "placeholder": "请选择",
+              "dynamicKey": "select1",
+              "dynamic": true,
+              "options": [
+                {
+                  "value": "1",
+                  "label": "下拉框1"
+                }
+              ],
+              "showSearch": false
             },
-            "model": "SInput_1621591210614",
-            "key": "SInput_1621591210614",
+            "model": "select_1621654489007",
+            "key": "select_1621654489007",
+            "help": "",
             "rules": [
               {
                 "required": false,
@@ -56,11 +81,11 @@ export default {
       }
     }
   },
-  mounted () {
+  mounted() {
     this.importData()
   },
   methods: {
-    importData () {
+    importData() {
       this.$refs.kfd.handleSetData(this.defaultData)
     },
     handleClose() {
@@ -70,6 +95,15 @@ export default {
       this.$confirm({
         title: '保存数据',
         content: <span>{data}</span>
+      })
+    },
+    handleSubmit() {
+      this.$refs.kfb.getData().then(res => {
+        console.log('res', res)
+        this.$message.success('提交成功')
+      }).catch(err => {
+        console.error(err)
+        this.$message.error('提交失败')
       })
     }
   }
