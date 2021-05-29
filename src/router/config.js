@@ -32,8 +32,13 @@ const options = {
           meta: {
             icon: 'dashboard'
           },
-          component: PageView,
+          component: BlankView,
           children: [
+            {
+              path: 'testGrid',
+              name: 'grid布局测试',
+              component: () => import('@/pages/test/testGrid/index'),
+            },
             {
               path: 'formDesign',
               name: '表单设计器',
