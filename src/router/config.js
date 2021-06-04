@@ -35,6 +35,11 @@ const options = {
           component: BlankView,
           children: [
             {
+              path: 'employTest',
+              name: '模拟雇佣流程',
+              component: () => import('@/pages/test/employTest/index'),
+            },
+            {
               path: 'testGrid',
               name: 'grid布局测试',
               component: () => import('@/pages/test/testGrid/index'),

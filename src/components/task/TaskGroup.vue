@@ -23,9 +23,9 @@ const dragOptions = {
   scroll: true,
   scrollSpeed: 2,
   animation: 150,
-  ghostClass: 'dragable-ghost',
-  chosenClass: 'dragable-chose',
-  dragClass: 'dragable-drag'
+  ghostClass: 'employTest-ghost',
+  chosenClass: 'employTest-chose',
+  dragClass: 'employTest-drag'
 }
 
 export default {
