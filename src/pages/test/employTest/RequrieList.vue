@@ -1,6 +1,6 @@
 <template>
-  <a-card>
-    <a-form v-has="'add'" :form="form" layout="inline" style="height: 65px">
+  <a-card title="需求岗位">
+    <a-form v-has="'work:add'" :form="form" layout="inline" style="height: 65px">
       <a-form-item label="任务">
         <a-input placeholder="输入任务发布吧" v-decorator="['taskName', {rules: [{required: true}]}]" />
       </a-form-item>
@@ -19,11 +19,14 @@
           <a-button @click="reset" icon="redo">重置</a-button>
           自动加载保存数据
           <a-switch v-model="loadLastData" />
+          自动保存数据
+          <a-switch v-model="autoSaveData" />
         </a-space>
       </a-form-item>
     </a-form>
     <ul class="list-container">
       <li class="list-item">
+        <span>雇佣者</span>
         <span>任务</span>
         <span> 申请人数 +  已聘用人数 = 本次需要人数</span>
         <span>
@@ -36,15 +39,21 @@
         </span>
       </li>
       <li v-for="item in requireList" :key="item.id" class="list-item">
-        <span>[{{ item.createTime }}]{{ item.taskName }}</span>
-        <span> {{ item.apply }} / {{ item.need }}</span>
+        <span>[{{ item.createTime }}]{{ item.createBy }}</span>
+        <span>{{ item.taskName }}</span>
+        <span>
+          申请学生: {{ item.applyStudent }} <br/>
+          已经聘用: {{ item.employStudent }} <br/>
+          总共需要: {{ item.need }}
+        </span>
         <a-space>
-          <a v-has="'apply'" @click="applyWork(item)">申请</a>
+          <a v-has="'reback'" v-if="item.applyStudent.includes(user.name)" @click="reBackApply(item)">撤回</a>
+          <a v-has="'apply'" v-else @click="applyWork(item)">申请</a>
           <span v-has="'employ'">
-            <a @click="employStu(item)">雇佣</a>
+<!--            <a @click="employStu(item)">雇佣</a>-->
 <!--            <a @click="dismissStu(item)">解雇</a>-->
           </span>
-          <a-popconfirm v-has="'delete'" title="是否删除？" @confirm="deleteItem(item.id)">
+          <a-popconfirm v-has="'work:delete'" title="是否删除？" @confirm="deleteItem(item.id)">
             <a>删除</a>
           </a-popconfirm>
         </a-space>
@@ -59,13 +68,14 @@
 <script>
 import moment from "moment";
 import {TEST_PRO_KEY} from "@/pages/test/employTest/user";
+import {mapGetters} from "vuex";
 
 export default {
   name: "RequrieList",
   data() {
     return {
       form: this.$form.createForm(this),
-      requireList: []
+      requireList: [],// 岗位列表
     }
   },
   computed: {
@@ -76,7 +86,16 @@ export default {
       get() {
         return this.$store.state.test.loadLastData
       }
-    }
+    },
+    autoSaveData: {
+      set(value) {
+        this.$store.commit('test/setAutoSaveData', value)
+      },
+      get() {
+        return this.$store.state.test.autoSaveData
+      }
+    },
+    ...mapGetters('test', ['user'])
   },
   created() {
     if (this.loadLastData) {
@@ -92,29 +111,35 @@ export default {
           const current = moment()
           this.requireList.push({
             ...values,
-            employer: this.user.name,// 用工方
+            status: 0,
             applyStudent: [],// 申请人
             employStudent: [],// 雇佣人
+            relativeStudent: [],// 关联学生
             id: +current,
             createTime: current.format('MM-DD HH:mm:ss'),
+            createBy: this.user.name,// 岗位创建者(用工方）
           })
         }
       })
     },
-    // (学生)/(教师帮学生)-申请职位 todo 关联教师、学士姓名
+    // (学生)/(教师帮学生)-申请职位 todo
     applyWork(item) {
-      ++item.apply
+      if (this.judgeIsEnough(item)) {
+        item.applyStudent.push(this.user.name)
+      } else {
+        this.$message.success('岗位申请人数满了')
+      }
     },
-    // 用工方 ---- start
-    employStu(item) {
-      ++item.employed
-    },
-    dismissStu(item) {
-      --item.employed
+    // 撤回
+    reBackApply(item) {
+      item.applyStudent = item.applyStudent.filter(stu => stu !== this.user.name)
     },
     // 用工方 ---- end
     deleteItem(id) {
       this.requireList = this.requireList.filter(l => l.id !== id)
+    },
+    judgeIsEnough(item) {
+      return item.applyStudent.length + item.employStudent < item.need;
     },
     reset() {
       this.form.resetFields()
@@ -133,16 +158,17 @@ export default {
     },
     loadData() {
       try {
-        this.requireList = JSON.parse(localStorage.getItem(TEST_PRO_KEY))
+        this.requireList = JSON.parse(localStorage.getItem(TEST_PRO_KEY)) || []
         this.$message.success('加载数据成功', 0.5)
       } catch (e) {
         console.error(e)
         this.$message.error('加载数据失败, 请重新保存', 0.5)
       }
     },
-    saveData() {
+    saveData(tip = true) {
       localStorage.setItem(TEST_PRO_KEY, JSON.stringify(this.requireList))
-      this.$message.success('保存成功', 0.5)
+      this.$store.commit('test/setRequireListStore', this.requireList)
+      tip && this.$message.success('保存成功', 0.5)
     },
     clearAll() {
       this.$confirm({
@@ -151,6 +177,16 @@ export default {
           this.requireList = []
         }
       })
+    }
+  },
+  watch: {
+    'requireList': {
+      deep: true,
+      handler() {
+        if (this.autoSaveData) {
+          this.saveData(false)
+        }
+      }
     }
   }
 }
@@ -163,7 +199,7 @@ export default {
 
   .list-item {
     display: grid;
-    grid-template-columns: 40% 30% 30%;
+    grid-template-columns: repeat(4, 1fr);
     border: 1px solid lavender;
     padding: 20px;
     line-height: 2.0;
