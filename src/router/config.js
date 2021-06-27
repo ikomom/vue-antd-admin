@@ -35,6 +35,11 @@ const options = {
           component: BlankView,
           children: [
             {
+              path: 'testFile',
+              name: '文件测试',
+              component: () => import('@/pages/test/fileTest/index'),
+            },
+            {
               path: 'employTest',
               name: '模拟雇佣流程',
               component: () => import('@/pages/test/employTest/index'),
