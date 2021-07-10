@@ -1,7 +1,10 @@
 <template>
-  <a-config-provider :locale="locale" :get-popup-container="popContainer">
-    <router-view/>
-  </a-config-provider>
+  <div>
+    <a-config-provider :locale="locale" :get-popup-container="popContainer">
+      <router-view/>
+    </a-config-provider>
+    <portal-target name="select-panel" multiple ></portal-target>
+  </div>
 </template>
 
 <script>

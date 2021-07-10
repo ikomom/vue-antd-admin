@@ -35,6 +35,16 @@ const options = {
           component: BlankView,
           children: [
             {
+              path: 'threeJs',
+              name: 'threeJs',
+              component: () => import('@/pages/test/threeTest/index'),
+            },
+            {
+              path: 'SComponents',
+              name: '组件库',
+              component: () => import('@/pages/test/sComponents/index'),
+            },
+            {
               path: 'testFile',
               name: '文件测试',
               component: () => import('@/pages/test/fileTest/index'),

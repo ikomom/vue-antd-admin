@@ -18,11 +18,13 @@ const assetsCDN = {
     nprogress: 'NProgress',
     clipboard: 'ClipboardJS',
     '@antv/data-set': 'DataSet',
-    'js-cookie': 'Cookies'
+    'js-cookie': 'Cookies',
+    three: "THREE"
   },
   css: [
   ],
   js: [
+    '//cdn.bootcdn.net/ajax/libs/three.js/r128/three.min.js',
     '//cdn.jsdelivr.net/npm/vue@2.6.11/dist/vue.min.js',
     '//cdn.jsdelivr.net/npm/vue-router@3.3.4/dist/vue-router.min.js',
     '//cdn.jsdelivr.net/npm/vuex@3.4.0/dist/vuex.min.js',
@@ -31,6 +33,14 @@ const assetsCDN = {
     '//cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js',
     '//cdn.jsdelivr.net/npm/@antv/data-set@0.11.4/build/data-set.min.js',
     '//cdn.jsdelivr.net/npm/js-cookie@2.2.1/src/js.cookie.min.js'
+  ]
+}
+
+const devAssetsCdn = {
+  externals: {},
+  js: [
+    '//cdn.bootcdn.net/ajax/libs/three.js/r128/three.min.js',// 已经通过npm引入，在此只是方便调试
+    '//120.52.31.39/sdkdoc/websdk/1.0.0/egis-2d.js'
   ]
 }
 
@@ -77,10 +87,8 @@ module.exports = {
         minRatio: 0.8
       }))
     }
-    // if prod, add externals
-    if (isProd) {
-      config.externals = assetsCDN.externals
-    }
+    // 跳过的内部依赖
+    config.externals = isProd ? assetsCDN.externals : devAssetsCdn.externals
   },
   chainWebpack: config => {
     // 生产环境下关闭css压缩的 colormin 项，因为此项优化与主题色替换功能冲突
@@ -92,13 +100,11 @@ module.exports = {
         })
     }
     // 生产环境下使用CDN
-    if (isProd) {
-      config.plugin('html')
-        .tap(args => {
-          args[0].cdn = assetsCDN
+    config.plugin('html')
+      .tap(args => {
+        args[0].cdn = isProd ? assetsCDN : devAssetsCdn
         return args
       })
-    }
   },
   css: {
     loaderOptions: {

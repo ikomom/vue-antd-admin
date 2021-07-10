@@ -1,13 +1,19 @@
 <template>
   <div>
-    <a-card title="文件上传">
-      <input type="file" @change="loadFile($event)" />
-      <img style="width: 300px" alt="preview" :src="imgPreview" />
-    </a-card>
-    <a-card title="加密图片转换">
-      <a-button @click="getDreImg">获取</a-button>
-      <img style="width: 80px" alt="imgDecr" :src="imgDecr" />
-    </a-card>
+    <details>
+      <summary>文件上传</summary>
+      <a-card>
+        <input type="file" @change="loadFile($event)" />
+        <img style="width: 300px" alt="preview" :src="imgPreview" />
+      </a-card>
+    </details>
+    <details>
+      <summary>获取网络图片</summary>
+      <a-card>
+        <a-button @click="getDreImg">获取</a-button>
+        <img style="width: 80px" alt="imgDecr" :src="imgDecr" />
+      </a-card>
+    </details>
   </div>
 </template>
 
