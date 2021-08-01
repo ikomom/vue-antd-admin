@@ -17,6 +17,12 @@
         <div style="text-align: center;background-color: #b3d4fc;height: 400px">占位</div>
       </div>
     </a-modal>
+
+    <ruby>
+      英雄
+      <rt>えいゆう</rt>
+      <rp>(えいゆう)</rp>
+    </ruby>
   </div>
 </template>
 
