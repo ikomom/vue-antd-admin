@@ -21,8 +21,7 @@ const assetsCDN = {
     'js-cookie': 'Cookies',
     three: "THREE"
   },
-  css: [
-  ],
+  css: [],
   js: [
     '//cdn.bootcdn.net/ajax/libs/three.js/r128/three.min.js',
     '//cdn.jsdelivr.net/npm/vue@2.6.11/dist/vue.min.js',
@@ -95,7 +94,7 @@ module.exports = {
     if (isProd) {
       config.plugin('optimize-css')
         .tap(args => {
-            args[0].cssnanoOptions.preset[1].colormin = false
+          args[0].cssnanoOptions.preset[1].colormin = false
           return args
         })
     }

@@ -35,6 +35,11 @@ const options = {
           component: BlankView,
           children: [
             {
+              path: 'calendar',
+              name: 'calendar',
+              component: () => import('@/pages/test/calendar/index'),
+            },
+            {
               path: 'threeJs',
               name: 'threeJs',
               component: () => import('@/pages/test/threeTest/index'),
