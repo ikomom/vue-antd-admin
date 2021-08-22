@@ -35,6 +35,11 @@ const options = {
           component: BlankView,
           children: [
             {
+              path: 'drag',
+              name: '拖拽',
+              component: () => import('@/pages/test/drag/index'),
+            },
+            {
               path: 'calendar',
               name: 'calendar',
               component: () => import('@/pages/test/calendar/index'),
