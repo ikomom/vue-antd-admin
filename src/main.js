@@ -14,7 +14,6 @@ import 'moment/locale/zh-cn'
 import './kForm/index'
 import PortalVue from 'portal-vue'
 Vue.use(PortalVue)
-
 const router = initRouter(store.state.setting.asyncRoutes)
 const i18n = initI18n('CN', 'US')
 

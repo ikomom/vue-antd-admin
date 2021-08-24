@@ -1,5 +1,9 @@
 <template>
   <a-tabs>
+    <a-tab-pane key="3" tab="test-snow">
+      <x-button>zzzz</x-button>
+      <Calendar/>
+    </a-tab-pane>
     <a-tab-pane key="1" tab="html5">
       <html5-drag-and-drop/>
     </a-tab-pane>
@@ -12,10 +16,12 @@
 <script>
 import Html5DragAndDrop from "@/pages/test/drag/html5DragAndDrop";
 import VueDragableDemo from "@/pages/test/drag/vueDragableDemo";
+import {XButton, Calendar} from "vue-snow-ui";
 
 export default {
   name: "index",
-  components: {VueDragableDemo, Html5DragAndDrop},
+  // eslint-disable-next-line vue/no-unused-components
+  components: {VueDragableDemo, Html5DragAndDrop, XButton, Calendar},
   created() {
     // document.addEventListener('dragstart', function (event) {
     //   console.log('dragstart: ' + event.dataTransfer);
