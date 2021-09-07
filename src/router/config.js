@@ -35,6 +35,11 @@ const options = {
           component: BlankView,
           children: [
             {
+              path: 'map',
+              name: '地图',
+              component: () => import('@/pages/test/map/index'),
+            },
+            {
               path: 'calendar',
               name: 'calendar',
               component: () => import('@/pages/test/calendar/index'),
