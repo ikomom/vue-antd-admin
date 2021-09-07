@@ -35,6 +35,11 @@ const options = {
           component: BlankView,
           children: [
             {
+              path: 'drag',
+              name: '拖拽',
+              component: () => import('@/pages/test/drag/index'),
+            },
+            {
               path: 'map',
               name: '地图',
               component: () => import('@/pages/test/map/index'),
