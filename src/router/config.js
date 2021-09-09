@@ -56,7 +56,7 @@ const options = {
             },
             {
               path: 'SComponents',
-              name: '组件库',
+              name: 'demo库',
               component: () => import('@/pages/test/sComponents/index'),
             },
             {
