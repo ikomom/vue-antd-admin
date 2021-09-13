@@ -38,7 +38,7 @@
     <m-collapse title="模拟线条(未完成)">
       <space-cube/>
     </m-collapse>
-    <m-collapse title="老虎机文字轮播"><number-roll/></m-collapse>
+    <m-collapse title="老虎机文字轮播" default-open="true"><input type="number" style="display: inline-block" v-model="rollNumber"/><number-roll :i="Number(rollNumber)"/></m-collapse>
     <m-collapse title="九宫格" ><Sudoku/></m-collapse>
   </div>
 </template>
@@ -58,7 +58,7 @@ export default {
   name: "index",
   components: {Sudoku, NumberRoll, MCollapse, CssDoodleTest, SpaceCube, TreeDText, WebpackIcon, TransformTest, SSelect},
   data() {
-    return {visible: false}
+    return {visible: false, rollNumber: 0}
   }
 }
 </script>
