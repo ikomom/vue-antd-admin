@@ -1,11 +1,11 @@
 <template>
   <div style="padding: 30px" class="calendar-container">
-    <img class="shape" src="https://s3.us-east-2.amazonaws.com/ui.glass/shape.svg" alt="">
-    <div class="card">
-      <h3 class="card-title">Glassmorphism is awesome</h3>
-      <p>A modern CSS UI library based on the glassmorphism design principles that will help you quickly design and build beautiful websites and applications.</p>
-      <a href="https://ui.glass">Read more</a>
-    </div>
+<!--    <img class="shape" src="https://s3.us-east-2.amazonaws.com/ui.glass/shape.svg" alt="">-->
+<!--    <div class="card">-->
+<!--      <h3 class="card-title">Glassmorphism is awesome</h3>-->
+<!--      <p>A modern CSS UI library based on the glassmorphism design principles that will help you quickly design and build beautiful websites and applications.</p>-->
+<!--      <a href="https://ui.glass">Read more</a>-->
+<!--    </div>-->
     <a-space>
       <span ref="dragBox" class="drag-box">拖动</span>
       <a-button @click="addEvents">添加事件</a-button>
@@ -17,36 +17,37 @@
         <a-select-option :value="2020">2020</a-select-option>
       </a-select>
     </a-space>
-    <FullCalendar :options="calendarOptions" ref="calendar">
+    <FullCalendar :style="calendarStyle" :options="calendarOptions" ref="calendar">
       <!--            <template v-slot:moreLinkContent="{num, text}">-->
       <!--              more {{text}}-->
       <!--            </template>-->
       <!--      <template v-slot:dayHeaderContent="{text}">-->
       <!--        header{{text}}-->
       <!--      </template>-->
-<!--      <template v-slot:dayCellContent="{dayNumberText, isPast, isToday}">-->
-<!--        <a-popover>-->
-<!--          <div slot="content">-->
-<!--            11111-->
-<!--          </div>-->
-<!--          <div style="height: 100%">{{ dayNumberText }} {{ isToday }} {{ isPast }}</div>-->
-<!--        </a-popover>-->
-<!--      </template>-->
-<!--      <template v-slot:eventContent="arg">-->
-<!--        <a-popover style="background: red;">-->
-<!--          <div slot="content" >{{arg.event.title}}</div>-->
-<!--          <b>{{ arg.timeText }}</b>-->
-<!--          <i>{{ arg.event.title }}</i>-->
-<!--        </a-popover>-->
-<!--      </template>-->
-            <!--   time-grid   -->
-<!--            <template v-slot:slotLabelContent="{text}">-->
-<!--              label {{text}}-->
-<!--            </template>-->
-<!--            <template v-slot:slotLaneContent="{text}">-->
-<!--              slotLaneContent-&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45; {{text}}-->
-<!--            </template>-->
+      <!--      <template v-slot:dayCellContent="{dayNumberText, isPast, isToday}">-->
+      <!--        <a-popover>-->
+      <!--          <div slot="content">-->
+      <!--            11111-->
+      <!--          </div>-->
+      <!--          <div style="height: 100%">{{ dayNumberText }} {{ isToday }} {{ isPast }}</div>-->
+      <!--        </a-popover>-->
+      <!--      </template>-->
+      <!--      <template v-slot:eventContent="arg">-->
+      <!--        <a-popover style="background: red;">-->
+      <!--          <div slot="content" >{{arg.event.title}}</div>-->
+      <!--          <b>{{ arg.timeText }}</b>-->
+      <!--          <i>{{ arg.event.title }}</i>-->
+      <!--        </a-popover>-->
+      <!--      </template>-->
+                  <!--   time-grid   -->
+      <!--            <template v-slot:slotLabelContent="{text}">-->
+      <!--              label {{text}}-->
+      <!--            </template>-->
+      <!--            <template v-slot:slotLaneContent="{text}">-->
+      <!--              slotLaneContent-&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45; {{text}}-->
+      <!--            </template>-->
     </FullCalendar>
+    <!-- 遮罩   -->
     <div ref="block" class="day-cell-mask" @click.prevent="$event.stopPropagation()">
       <p v-if="currentHoverDay.icon"><a-icon :type="currentHoverDay.icon" />{{ currentHoverDay.date }}</p>
       <a-button type="primary" @click="onOrder">预约</a-button>
@@ -198,6 +199,9 @@ export default {
         }
       },
       currentHoverDay: {},
+      calendarStyle: {
+        '--fc-border-color': '#F3F4F5'
+      }
     }
   },
   mounted() {
@@ -303,56 +307,50 @@ export default {
     },
     onDayCellDidMount(event) {
       // console.log('onDayCellDidMount', event, this.$refs.block)
-      if(this.calendar && this.calendar.view.type !== 'dayGridMonth') return false
-      // const td = event.el.children[0].innerHTML
-      let has = false
-      const currentDay = moment(event.date).format('YYYY-MM-DD')
-
-      event.el.onmouseenter = (e) => {
-        // console.log('onMouseEnter', event.el.children, this.$refs.block)
-        has = this.calendar.getEvents().some(e => {
-          const isCur = currentDay === moment(e.start).format('YYYY-MM-DD')
-          if (e.end) {
-            return isCur || moment(event.date).isBetween(e.start, e.end)
-          }
-          return isCur
-        })
-        if (!has) {
-          this.currentHoverDay = {
-            icon: 'check',
-            date: currentDay,
-          }
-          Object.assign(this.$refs.block.style, {
-            height: '100%',
-            width: '100%',
-            display: 'block',
-          })
-          event.el.children[0].appendChild(this.$refs.block)
-        }
-      }
-      event.el.onmouseleave = (e) => {
-        // console.log('onmouseleave',  event.el.children)
-        this.currentHoverDay = {}
-        if(!has) {
-          event.el.children[0].removeChild(this.$refs.block)
-        } else {
-          has = false
-        }
-        // this.calendar.render()
-        // this.calendar.updateSize()
-      }
+      // if(this.calendar && this.calendar.view.type !== 'dayGridMonth') return false
+      // // const td = event.el.children[0].innerHTML
+      // let has = false
+      // const currentDay = moment(event.date).format('YYYY-MM-DD')
+      //
+      // event.el.onmouseenter = (e) => {
+      //   // console.log('onMouseEnter', event.el.children, this.$refs.block)
+      //   has = this.calendar.getEvents().some(e => {
+      //     const isCur = currentDay === moment(e.start).format('YYYY-MM-DD')
+      //     if (e.end) {
+      //       return isCur || moment(event.date).isBetween(e.start, e.end)
+      //     }
+      //     return isCur
+      //   })
+      //   if (!has) {
+      //     this.currentHoverDay = {
+      //       icon: 'check',
+      //       date: currentDay,
+      //     }
+      //     Object.assign(this.$refs.block.style, {
+      //       height: '100%',
+      //       width: '100%',
+      //       display: 'block',
+      //     })
+      //     event.el.children[0].appendChild(this.$refs.block)
+      //   }
+      // }
+      // event.el.onmouseleave = (e) => {
+      //   // console.log('onmouseleave',  event.el.children)
+      //   this.currentHoverDay = {}
+      //   if(!has) {
+      //     event.el.children[0].removeChild(this.$refs.block)
+      //   } else {
+      //     has = false
+      //   }
+      //   // this.calendar.render()
+      //   // this.calendar.updateSize()
+      // }
     },
     changeView() {
 
     }
   },
   watch: {
-    'calendarOptions.events': {
-      deep: true,
-      handler(event) {
-        console.log('新的', event)
-      }
-    }
   }
 }
 </script>
@@ -382,8 +380,8 @@ export default {
 
 .calendar-container {
   margin: 0;
-  background: #edc0bf;
-  background: linear-gradient(90deg, #edc0bf 0,#c4caef 58%);
+  background: #fff;
+  //background: linear-gradient(90deg, #edc0bf 0,#c4caef 58%);
   font-family: 'Inter', sans-serif;
   //backdrop-filter: blur(3px);
   .shape {

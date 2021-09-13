@@ -4015,6 +4015,11 @@ date-fns@^2.14.0:
   resolved "https://registry.nlark.com/date-fns/download/date-fns-2.21.3.tgz?cache=0&sync_timestamp=1620446248863&other_urls=https%3A%2F%2Fregistry.nlark.com%2Fdate-fns%2Fdownload%2Fdate-fns-2.21.3.tgz#8f5f6889d7a96bbcc1f0ea50239b397a83357f9b"
   integrity sha1-j19oidepa7zB8OpQI5s5eoM1f5s=
 
+dayjs@^1.10.6:
+  version "1.10.7"
+  resolved "https://registry.npmjs.org/dayjs/-/dayjs-1.10.7.tgz#2cf5f91add28116748440866a0a1d26f3a6ce468"
+  integrity sha512-P6twpd70BcPK34K26uJ1KT3wlhpuOAPoMwJzpsIWUxHZ7wpmbdZL/hQqBDfz7hGurYSa5PhzdhDHtt319hL3ig==
+
 de-indent@^1.0.2:
   version "1.0.2"
   resolved "https://registry.nlark.com/de-indent/download/de-indent-1.0.2.tgz#b2038e846dc33baa5796128d0804b455b8c1e21d"
@@ -10600,12 +10605,13 @@ vue-server-renderer@^2.6.10:
     serialize-javascript "^3.1.0"
     source-map "0.5.6"
 
-vue-snow-ui@0.1.4:
-  version "0.1.4"
-  resolved "https://registry.nlark.com/vue-snow-ui/download/vue-snow-ui-0.1.4.tgz#5de3068516c45d21cf5b5bfb7b5611b0541a2566"
-  integrity sha1-XeMGhRbEXSHPW1v7e1YRsFQaJWY=
+vue-snow-ui@0.1.5:
+  version "0.1.5"
+  resolved "https://registry.npmjs.org/vue-snow-ui/-/vue-snow-ui-0.1.5.tgz#a147f7b0ced3caf6e096351a913624af13ea171e"
+  integrity sha512-Rkq0Xf4UqlBVzSmtFVBnJN0O1M363yydYRU0gFVU1uCB+8RV5BvMuTOZPDnFa6cFjh5wUMGgCzO9nnuuwEWAZA==
   dependencies:
     core-js "^3.6.5"
+    dayjs "^1.10.6"
     vue "^2.6.11"
 
 vue-style-loader@^4.1.0, vue-style-loader@^4.1.2:

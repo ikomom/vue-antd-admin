@@ -1,8 +1,11 @@
 <template>
   <a-tabs>
+    <a-tab-pane key="4" tab="自定义拖拽事件">
+      <my-drag-event/>
+    </a-tab-pane>
     <a-tab-pane key="3" tab="test-snow">
       <x-button>zzzz</x-button>
-      <Calendar/>
+      <XCalendar/>
     </a-tab-pane>
     <a-tab-pane key="1" tab="html5">
       <html5-drag-and-drop/>
@@ -16,12 +19,13 @@
 <script>
 import Html5DragAndDrop from "@/pages/test/drag/html5DragAndDrop";
 import VueDragableDemo from "@/pages/test/drag/vueDragableDemo";
-import {XButton, Calendar} from "vue-snow-ui";
+import {XButton, XCalendar} from "vue-snow-ui";
+import MyDragEvent from "@/pages/test/drag/myDragEvent";
 
 export default {
   name: "index",
   // eslint-disable-next-line vue/no-unused-components
-  components: {VueDragableDemo, Html5DragAndDrop, XButton, Calendar},
+  components: {MyDragEvent, VueDragableDemo, Html5DragAndDrop, XButton, XCalendar},
   created() {
     // document.addEventListener('dragstart', function (event) {
     //   console.log('dragstart: ' + event.dataTransfer);
