@@ -27,7 +27,8 @@
         @mouseup="onMouseUp"
       >
         {{ item.title }}
-        <div class="event-resize"></div>
+        <div class="event-resize left" @mousedown.stop.self="onMouseDownResize"></div>
+        <div class="event-resize bottom" @mousedown.stop.self="onMouseDownResize"></div>
       </div>
       </tbody>
 
@@ -37,6 +38,11 @@
 </template>
 
 <script>
+import {SEventSource} from "@/pages/test/drag/Event";
+import moment from 'moment';
+
+window.moment = moment;
+
 /**
  * TODO 待办
  * 1. table表现力不佳，可能会有隐藏bug, 需要谨慎使用， 以后看看要不要换成div
@@ -53,14 +59,11 @@ export default {
       mousedownCell: null,
       mousedown: false,
       tempEvent: null,
-      events: [
+      eventSource: [
         {
           title: '测试事件',
           id: 1,
-          style: {
-            top: 0,
-            left: 0,
-          },
+          style: {},
           // 未关联日历，先用style
           start: '2020-09-13',
           end: '2021-09-13',
@@ -68,7 +71,21 @@ export default {
       ],
     }
   },
+  computed: {
+    events({eventSource}) {
+      console.log('刷新数据源', eventSource)
+      return eventSource.map(source => {
+        return {
+          ...source,
+          style: source.style ? source.style : {}
+        }
+      })
+    }
+  },
   methods: {
+    onMouseDownResize(e) {
+      console.log('onMouseDownResize', e)
+    },
     onMouseDownCell(e) {
       this.mousedown = true
       this.mousedownCell = this.getCurCell(e).curCell
@@ -86,9 +103,9 @@ export default {
         if (title) {
           this.tempEvent.title = title
         } else {
-          const index = this.events.findIndex((item) => item.id === this.tempEvent.id)
+          const index = this.eventSource.findIndex((item) => item.id === this.tempEvent.id)
           // _.remove(this.events, (item) => item.id === this.tempEvent.id)
-          this.events.splice(index, 1)
+          this.eventSource.splice(index, 1)
           console.log('removed', this.events)
         }
         this.tempEvent = null
@@ -116,23 +133,29 @@ export default {
     onMouseMove(e) {
       const {moveStyle, curCell} = this.getCurCell(e);
       if (this.drag) {
-        console.log('mousemove', curCell, this.drag)
+        console.log('mousemove', curCell, this.drag.style)
+        // TODO 拖动现在是操作computed出来的数据，怪不得改不到源数据，触发不了刷新; 先把日期接进去再说吧
         Object.assign(this.drag.style, moveStyle)
       }
-      console.log('this.mousedownCell', this.mousedownCell, curCell)
+      // console.log('this.mousedownCell', this.mousedownCell, curCell)
       if (this.mousedown) {
         if (this.tempEvent === null) {
           console.log('新建')
-          // this.events.push()
-          this.tempEvent = {
-            id: new Date().getTime(),
-            style: moveStyle,
-            title: '( 无标题 )'
+          this.tempEvent = new SEventSource({style: moveStyle})
+          this.eventSource.push(this.tempEvent)
+        } else if (this.mousedownCell[1] === curCell[1]){// 先求横向的
+          if (this.mousedownCell[0] <= curCell[0]) {
+            this.$set(this.tempEvent.style, 'width', `calc(100% / 7 * ${curCell[0] - this.mousedownCell[0] + 1})`)
+            console.log('右延申', curCell[0] - this.mousedownCell[0], {...this.tempEvent.style})
+            // 0 时置于原位
+            if (this.mousedownCell[0] === curCell[0]) {
+              this.$set(this.tempEvent.style, 'left', moveStyle.left)
+            }
+          } else {
+            this.$set(this.tempEvent.style, 'width', `calc(100% / 7 * ${this.mousedownCell[0] - curCell[0] + 1})`)
+            console.log('左延申', this.mousedownCell[0] - curCell[0], {...this.tempEvent.style})
+            this.$set(this.tempEvent.style, 'left', moveStyle.left)
           }
-          this.events.push(this.tempEvent)
-        } else if (this.mousedownCell[1] === curCell[1] && this.mousedownCell[0] <= curCell[0]){// 先求横、正向的
-          console.log('延申', curCell[0] - this.mousedownCell[0], this.tempEvent.style)
-          this.$set(this.tempEvent.style, 'width', `calc(100% / 7 * ${curCell[0] - this.mousedownCell[0] + 1})`)
         }
       }
     },
@@ -180,7 +203,6 @@ export default {
     }
   }
 
-
   .event {
     position: absolute;
     top: 0;
@@ -198,7 +220,24 @@ export default {
     }
 
     .event-resize {
-      cursor: s-resize;
+      position: absolute;
+      //background: red;
+
+      &.left {
+        cursor: e-resize;
+        right: 0;
+        top: 0;
+        width: 4px;
+        height: 100%;
+      }
+
+      &.bottom {
+        cursor: s-resize;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 3px;
+      }
     }
   }
 }

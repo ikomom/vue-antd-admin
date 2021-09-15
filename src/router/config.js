@@ -35,6 +35,11 @@ const options = {
           component: BlankView,
           children: [
             {
+              path: 'search',
+              name: '搜索',
+              component: () => import('@/pages/test/search/index'),
+            },
+            {
               path: 'drag',
               name: '拖拽',
               component: () => import('@/pages/test/drag/index'),
