@@ -2,6 +2,7 @@
   <div class="event-container">
     宽度(%):
     <a-input-number v-model="width" />
+    <month-view/>
     <table
       class="table-class"
       :style="{width: width + '%'}"
@@ -38,8 +39,10 @@
 </template>
 
 <script>
-import {SEventSource} from "@/pages/test/drag/Event";
+import {SEventSource} from "@/pages/test/drag/components/calendar/Event";
 import moment from 'moment';
+import {generateMonthDays} from "@/pages/test/drag/components/calendar/date";
+import MonthView from "@/pages/test/drag/components/calendar/MonthView";
 
 window.moment = moment;
 
@@ -52,6 +55,7 @@ window.moment = moment;
  */
 export default {
   name: "myDragEvent",
+  components: {MonthView},
   data() {
     return {
       width: 100,

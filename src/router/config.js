@@ -35,6 +35,11 @@ const options = {
           component: BlankView,
           children: [
             {
+              path: 'table',
+              name: '表格',
+              component: () => import('@/pages/test/table/index'),
+            },
+            {
               path: 'search',
               name: '搜索',
               component: () => import('@/pages/test/search/index'),

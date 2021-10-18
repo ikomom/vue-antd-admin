@@ -20,7 +20,7 @@
 import Html5DragAndDrop from "@/pages/test/drag/html5DragAndDrop";
 import VueDragableDemo from "@/pages/test/drag/vueDragableDemo";
 import {XButton, XCalendar} from "vue-snow-ui";
-import MyDragEvent from "@/pages/test/drag/myDragEvent";
+import MyDragEvent from "@/pages/test/drag/components/calendar/myDragEvent";
 
 export default {
   name: "index",
