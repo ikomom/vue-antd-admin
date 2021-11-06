@@ -2,39 +2,18 @@ import {isDef, isRegExp, remove} from '@/utils/util'
 
 const patternTypes = [String, RegExp, Array]
 
-function matches (pattern, name) {
-  if (Array.isArray(pattern)) {
-    if (pattern.indexOf(name) > -1) {
-      return true
-    } else {
-      for (let item of pattern) {
-        if (isRegExp(item) && item.test(name)) {
-          return true
-        }
-      }
-      return false
-    }
-  } else if (typeof pattern === 'string') {
-    return pattern.split(',').indexOf(name) > -1
-  } else if (isRegExp(pattern)) {
-    return pattern.test(name)
-  }
-  /* istanbul ignore next */
-  return false
-}
-
-function getComponentName (opts) {
+function getComponentName(opts) {
   return opts && (opts.Ctor.options.name || opts.tag)
 }
 
-function getComponentKey (vnode) {
+function getComponentKey(vnode) {
   const {componentOptions, key} = vnode
   return key == null
     ? componentOptions.Ctor.cid + (componentOptions.tag ? `::${componentOptions.tag}` : '')
     : key + componentOptions.Ctor.cid
 }
 
-function getFirstComponentChild (children) {
+function getFirstComponentChild(children) {
   if (Array.isArray(children)) {
     for (let i = 0; i < children.length; i++) {
       const c = children[i]
@@ -45,8 +24,8 @@ function getFirstComponentChild (children) {
   }
 }
 
-function pruneCache (keepAliveInstance, filter) {
-  const { cache, keys, _vnode } = keepAliveInstance
+function pruneCache(keepAliveInstance, filter) {
+  const {cache, keys, _vnode} = keepAliveInstance
   for (const key in cache) {
     const cachedNode = cache[key]
     if (cachedNode) {
@@ -68,7 +47,7 @@ function pruneCacheEntry2(cache, key, keys) {
   remove(keys, key)
 }
 
-function pruneCacheEntry (cache, key, keys, current) {
+function pruneCacheEntry(cache, key, keys, current) {
   const cached = cache[key]
   if (cached && (!current || cached.tag !== current.tag)) {
     cached.componentInstance.$destroy()
@@ -86,13 +65,15 @@ export default {
   },
   props: {
     include: patternTypes,
+    includeKeys: patternTypes,
     exclude: patternTypes,
     excludeKeys: patternTypes,
+    matches: Function,
     max: [String, Number],
     clearCaches: Array
   },
   watch: {
-    clearCaches: function(val) {
+    clearCaches: function (val) {
       if (val && val.length > 0) {
         const {cache, keys} = this
         val.forEach(key => {
@@ -102,31 +83,56 @@ export default {
       }
     }
   },
-
   created() {
     this.cache = Object.create(null)
     this.keys = []
   },
-
-  destroyed () {
+  destroyed() {
     for (const key in this.cache) {
       pruneCacheEntry(this.cache, key, this.keys)
     }
   },
-
-  mounted () {
+  mounted() {
     this.$watch('include', val => {
-      pruneCache(this, (name) => matches(val, name))
+      pruneCache(this, (name) => this._matches(val, name))
+    })
+    this.$watch('includeKeys', val => {
+      pruneCache(this, (name, key) => this._matches(val, key))
     })
     this.$watch('exclude', val => {
-      pruneCache(this, (name) => !matches(val, name))
+      pruneCache(this, (name) => !this._matches(val, name))
     })
     this.$watch('excludeKeys', val => {
-      pruneCache(this, (name, key) => !matches(val, key))
+      pruneCache(this, (name, key) => !this._matches(val, key))
     })
   },
+  methods: {
+    _matches(pattern, name) {
+      if (this.matches) {
+        return this.matches(pattern, name)
+      }
+      if (Array.isArray(pattern)) {
+        if (pattern.indexOf(name) > -1) {
+          return true
+        } else {
+          for (let item of pattern) {
+            if (isRegExp(item) && item.test(name)) {
+              return true
+            }
+          }
+          return false
+        }
+      } else if (typeof pattern === 'string') {
+        return pattern.split(',').indexOf(name) > -1
+      } else if (isRegExp(pattern)) {
+        return pattern.test(name)
+      }
+      /* istanbul ignore next */
+      return false
+    }
 
-  render () {
+  },
+  render() {
     const slot = this.$slots.default
     const vnode = getFirstComponentChild(slot)
     const componentOptions = vnode && vnode.componentOptions
@@ -134,18 +140,20 @@ export default {
       // check pattern
       const name = getComponentName(componentOptions)
       const componentKey = getComponentKey(vnode)
-      const { include, exclude, excludeKeys } = this
+      const {include, exclude, excludeKeys, includeKeys} = this
+      // console.log('keepAlvie', {includeKeys, componentKey, name, include})
       if (
         // not included
-        (include && (!name || !matches(include, name))) ||
+        (include && (!name || !this._matches(include, name))) ||
+        (includeKeys && (!componentKey || !this._matches(includeKeys, componentKey))) ||
         // excluded
-        (exclude && name && matches(exclude, name)) ||
-        (excludeKeys && componentKey && matches(excludeKeys, componentKey))
+        (exclude && name && this._matches(exclude, name)) ||
+        (excludeKeys && componentKey && this._matches(excludeKeys, componentKey))
       ) {
         return vnode
       }
 
-      const { cache, keys } = this
+      const {cache, keys} = this
       const key = vnode.key == null
         // same constructor may get registered as different local components
         // so cid alone is not enough (#3269)
