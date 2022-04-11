@@ -44,6 +44,7 @@
       </m-collapse>
       <m-collapse title="老虎机文字轮播" default-open="true"><input type="number" style="display: inline-block" v-model="rollNumber"/><number-roll :i="Number(rollNumber)"/></m-collapse>
       <m-collapse title="九宫格" ><Sudoku/></m-collapse>
+      <m-collapse title="时钟" defaultOpen><Clock/></m-collapse>
     </a-tab-pane>
   </a-tabs>
 </template>
@@ -59,10 +60,12 @@ import MCollapse from "@/components/MCollapse";
 import NumberRoll from "@/pages/test/sComponents/numberRoll";
 import Sudoku from "@/pages/test/sComponents/Sudoku";
 import SingleSetting from "@/pages/test/sComponents/SingleSetting";
+import Clock from "@/pages/test/sComponents/clock";
 
 export default {
   name: "index",
   components: {
+    Clock,
     SingleSetting,
     Sudoku, NumberRoll, MCollapse, CssDoodleTest, SpaceCube, TreeDText, WebpackIcon, TransformTest, SSelect},
   data() {
