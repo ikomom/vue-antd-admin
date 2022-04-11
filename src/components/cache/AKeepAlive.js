@@ -1,18 +1,34 @@
-import {isDef, isRegExp, remove} from '@/utils/util'
+import { isDef, isRegExp, remove } from '@/utils/util'
 
 const patternTypes = [String, RegExp, Array]
 
+/**
+ *
+ * @param {VNode.componentOptions} opts
+ * @returns {*}
+ */
 function getComponentName(opts) {
   return opts && (opts.Ctor.options.name || opts.tag)
 }
 
+/**
+ *
+ * @param {VNode} vnode
+ * @returns {*}
+ */
 function getComponentKey(vnode) {
-  const {componentOptions, key} = vnode
+  const { componentOptions, key } = vnode
   return key == null
+    // cid是唯一且自增的
     ? componentOptions.Ctor.cid + (componentOptions.tag ? `::${componentOptions.tag}` : '')
     : key + componentOptions.Ctor.cid
 }
 
+/**
+ * 获取第一个子组件
+ * @param children
+ * @returns {{isAsyncPlaceholder}|*}
+ */
 function getFirstComponentChild(children) {
   if (Array.isArray(children)) {
     for (let i = 0; i < children.length; i++) {
@@ -24,8 +40,13 @@ function getFirstComponentChild(children) {
   }
 }
 
+/**
+ *
+ * @param {VNode} keepAliveInstance
+ * @param {Function} filter
+ */
 function pruneCache(keepAliveInstance, filter) {
-  const {cache, keys, _vnode} = keepAliveInstance
+  const { cache, keys, _vnode } = keepAliveInstance
   for (const key in cache) {
     const cachedNode = cache[key]
     if (cachedNode) {
@@ -38,6 +59,12 @@ function pruneCache(keepAliveInstance, filter) {
   }
 }
 
+/**
+ * 清除缓存 2
+ * @param {Object<String, VNode>} cache
+ * @param {String} key
+ * @param {Array} keys
+ */
 function pruneCacheEntry2(cache, key, keys) {
   const cached = cache[key]
   if (cached) {
@@ -47,7 +74,14 @@ function pruneCacheEntry2(cache, key, keys) {
   remove(keys, key)
 }
 
-function pruneCacheEntry(cache, key, keys, current) {
+/**
+ * 清除缓存
+ * @param {Object<String, VNode>} cache
+ * @param key
+ * @param keys
+ * @param {VNode} current
+ */
+function pruneCacheEntry(cache = {}, key = '', keys = [], current = {}) {
   const cached = cache[key]
   if (cached && (!current || cached.tag !== current.tag)) {
     cached.componentInstance.$destroy()
@@ -55,17 +89,18 @@ function pruneCacheEntry(cache, key, keys, current) {
   cache[key] = null
   remove(keys, key)
 }
-
+// 闲的，手动实现一个keepAlive, 只支持一个子元素
 export default {
   name: 'AKeepAlive',
-  abstract: true,
+  // mode: 'abstract', // 抽象路由
   model: {
     prop: 'clearCaches',
-    event: 'clear',
+    event: 'clear'
   },
   props: {
+    // 其余和keep-alive相似 https://cn.vuejs.org/v2/api/#keep-alive
     include: patternTypes,
-    includeKeys: patternTypes,
+    includeKeys: patternTypes, // 根据key值判断是否相等
     exclude: patternTypes,
     excludeKeys: patternTypes,
     matches: Function,
@@ -75,7 +110,7 @@ export default {
   watch: {
     clearCaches: function (val) {
       if (val && val.length > 0) {
-        const {cache, keys} = this
+        const { cache, keys } = this
         val.forEach(key => {
           pruneCacheEntry2(cache, key, keys)
         })
@@ -84,6 +119,7 @@ export default {
     }
   },
   created() {
+    // 不放到data里，防止重渲染
     this.cache = Object.create(null)
     this.keys = []
   },
@@ -115,7 +151,7 @@ export default {
         if (pattern.indexOf(name) > -1) {
           return true
         } else {
-          for (let item of pattern) {
+          for (const item of pattern) {
             if (isRegExp(item) && item.test(name)) {
               return true
             }
@@ -136,38 +172,38 @@ export default {
     const slot = this.$slots.default
     const vnode = getFirstComponentChild(slot)
     const componentOptions = vnode && vnode.componentOptions
+
     if (componentOptions) {
-      // check pattern
       const name = getComponentName(componentOptions)
       const componentKey = getComponentKey(vnode)
-      const {include, exclude, excludeKeys, includeKeys} = this
-      // console.log('keepAlvie', {includeKeys, componentKey, name, include})
+
+      const { include, exclude, excludeKeys, includeKeys } = this
       if (
-        // not included
+        // 组件名不在include中或不存在
         (include && (!name || !this._matches(include, name))) ||
         (includeKeys && (!componentKey || !this._matches(includeKeys, componentKey))) ||
-        // excluded
+        // 组件名在exclude中
         (exclude && name && this._matches(exclude, name)) ||
+        // 组件key在exclude中
         (excludeKeys && componentKey && this._matches(excludeKeys, componentKey))
       ) {
+        // 返回原值
         return vnode
       }
 
-      const {cache, keys} = this
-      const key = vnode.key == null
-        // same constructor may get registered as different local components
-        // so cid alone is not enough (#3269)
-        ? componentOptions.Ctor.cid + (componentOptions.tag ? `::${componentOptions.tag}` : '')
-        : vnode.key + componentOptions.Ctor.cid
-      if (cache[key]) {
-        vnode.componentInstance = cache[key].componentInstance
-        // make current key freshest
-        remove(keys, key)
-        keys.push(key)
+      const { cache, keys } = this
+      if (cache[componentKey]) {
+        console.log('命中缓存', { componentKey, name })
+        // 设置缓存
+        vnode.componentInstance = cache[componentKey].componentInstance
+        // 去除旧的key值, 使其最新
+        remove(keys, componentKey)
+        keys.push(componentKey)
       } else {
-        cache[key] = vnode
-        keys.push(key)
-        // prune oldest entry
+        console.log('新设缓存', { componentKey, name })
+        cache[componentKey] = vnode
+        keys.push(componentKey)
+        // 超过最大值去除最旧的一个
         if (this.max && keys.length > parseInt(this.max)) {
           pruneCacheEntry(cache, keys[0], keys, this._vnode)
         }
