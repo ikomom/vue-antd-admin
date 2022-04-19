@@ -35,6 +35,11 @@ const options = {
           component: BlankView,
           children: [
             {
+              path: 'faceRecognition',
+              name: '人脸识别',
+              component: () => import('@/pages/test/faceRecognition/index'),
+            },
+            {
               path: 'table',
               name: '表格',
               component: () => import('@/pages/test/table/index'),
