@@ -1,6 +1,6 @@
 <template>
   <Provider>
-    <Searcher style="margin: 10px; 0px"/>
+    <Searcher style="margin: 10px 0"/>
     <Content style="border: 1px solid red; padding: 10px;" />
   </Provider>
 </template>
