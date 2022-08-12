@@ -25,14 +25,6 @@ export const getInject = (alias= 'provider') => {
     inject: {
       [`${alias}`]: PROVIDE_KEY
     },
-    watch: {
-      [alias]: {
-        deep: true,
-        handler(val){
-          console.log(('watch', val))
-        }
-      }
-    }
   }
 }
 
