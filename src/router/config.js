@@ -35,6 +35,16 @@ const options = {
           component: BlankView,
           children: [
             {
+              path: 'searchFilter',
+              name: 'searchFilter',
+              component: () => import('@/pages/test/searchFilter/index'),
+            },
+            {
+              path: 'rxjs',
+              name: 'rxjs',
+              component: () => import('@/pages/test/rxjs/index'),
+            },
+            {
               path: 'faceRecognition',
               name: '人脸识别',
               component: () => import('@/pages/test/faceRecognition/index'),

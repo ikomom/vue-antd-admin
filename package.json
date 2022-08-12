@@ -43,6 +43,7 @@
     "nprogress": "^0.2.0",
     "ol": "^6.6.1",
     "portal-vue": "^2.1.7",
+    "rxjs": "^7.5.5",
     "solarlunar": "^2.0.7",
     "three": "^0.130.0",
     "three-orbit-controls": "^82.1.0",
