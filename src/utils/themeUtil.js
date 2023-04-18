@@ -20,9 +20,15 @@ function getThemeColors(color, $theme) {
   return themeColors
 }
 
+/**
+ * 切换主题
+ * @param newColor
+ * @param $theme
+ * @returns {Promise<unknown>}
+ */
 function changeThemeColor(newColor, $theme) {
-  let promise = client.changer.changeColor({newColors: getThemeColors(newColor, $theme)})
-  return promise
+  const newColors = getThemeColors(newColor, $theme)
+  return client.changer.changeColor({newColors: newColors})
 }
 
 function modifyVars(color) {
